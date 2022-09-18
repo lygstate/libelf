@@ -35,13 +35,10 @@
 #include <errno.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <sys/param.h>
-#include <endian.h>
-#include <byteswap.h>
-#include <unistd.h>
 #include <string.h>
 #include <stdarg.h>
 #include <stdlib.h>
+#include "libelfP.h"
 
 #if BYTE_ORDER == LITTLE_ENDIAN
 # define LE32(n)	(n)

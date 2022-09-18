@@ -31,10 +31,16 @@
 #define _LIBELFP_H 1
 
 #include <ar.h>
+#include <byteswap.h>
+#include <endian.h>
+#include <sys/mman.h>
+#include <sys/param.h>
+#include <unistd.h>
 #include <gelf.h>
 
 #include <errno.h>
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
