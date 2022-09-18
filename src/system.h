@@ -102,9 +102,9 @@ startswith (const char *str, const char *prefix)
 #ifndef TEMP_FAILURE_RETRY
 #define TEMP_FAILURE_RETRY(expression) \
   ({ ssize_t __res; \
-     do \
+     do { \
        __res = expression; \
-     while (__res == -1 && errno == EINTR); \
+     } while (__res == -1 && errno == EINTR); \
      __res; })
 #endif
 

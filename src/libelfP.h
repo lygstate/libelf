@@ -30,12 +30,23 @@
 #ifndef _LIBELFP_H
 #define _LIBELFP_H 1
 
+#ifdef _WIN32
+#include <io.h>
+#include <fcntl.h>
+#include "win32/ar.h"
+#if defined(__GNUC__)
+#include <unistd.h>
+#include <sys/param.h>
+#endif
+#else
 #include <ar.h>
 #include <byteswap.h>
 #include <endian.h>
 #include <sys/mman.h>
 #include <sys/param.h>
 #include <unistd.h>
+#endif
+
 #include <gelf.h>
 
 #include <errno.h>
@@ -45,6 +56,57 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "eu-config.h"
+
+#if !defined(NOT_HAVE_LIBINTL)
+#include <libintl.h>
+#endif
+
+#if defined(_MSC_VER)
+#define __attribute__(x)
+typedef intptr_t ssize_t;
+#define LITTLE_ENDIAN 1
+#define BIG_ENDIAN 2
+#define BYTE_ORDER LITTLE_ENDIAN
+static inline int ftruncate(int fd, off_t length)
+{
+     _chsize_s(fd, length);
+}
+#endif /* defined(_MSC_VER) */
+
+#if defined(_WIN32)
+#define bswap_16(x) \
+     ((((x) >> 8) & 0xff) | (((x) & 0xff) << 8))
+#define bswap_32(x) \
+     ((((x) & 0xff000000) >> 24) | (((x) & 0x00ff0000) >>  8) |  \
+      (((x) & 0x0000ff00) <<  8) | (((x) & 0x000000ff) << 24))
+#define bswap_64(x) \
+     ((((x) & 0xff00000000000000ull) >> 56) |  \
+      (((x) & 0x00ff000000000000ull) >> 40) |  \
+      (((x) & 0x0000ff0000000000ull) >> 24) |  \
+      (((x) & 0x000000ff00000000ull) >> 8)  |  \
+      (((x) & 0x00000000ff000000ull) << 8)  |  \
+      (((x) & 0x0000000000ff0000ull) << 24) |  \
+      (((x) & 0x000000000000ff00ull) << 40) |  \
+      (((x) & 0x00000000000000ffull) << 56))
+#define htobe64(x) bswap_64(x)
+#define be64toh(x) bswap_64(x)
+
+ssize_t pread(int fd, void *buf, size_t count, off_t offset);
+ssize_t pwrite(int fd, const void *buf, size_t count, off_t offset);
+#endif /* defined(_WIN32) */
+
+#ifndef powerof2
+#define powerof2(x)     ((((x) - 1) & (x)) == 0)
+#endif
+
+#ifndef MAX
+#define MAX(x, y) (((x) > (y)) ? (x) : (y))
+#endif
+
+#ifndef MIN
+#define MIN(x, y) (((x) < (y)) ? (x) : (y))
+#endif
 
 /* Helper Macros to write 32 bit and 64 bit functions.  */
 #define __elfw2_(Bits, Name) __elf##Bits##_##Name

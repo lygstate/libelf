@@ -64,7 +64,7 @@
  #define ELFCOMPRESS_HIPROC     0x7fffffff /* End of processor-specific.  */
 #endif
 
-#if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 3)
+#if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 3))
 # define __nonnull_attribute__(...) __attribute__ ((__nonnull__ (__VA_ARGS__)))
 # define __deprecated_attribute__ __attribute__ ((__deprecated__))
 # define __pure_attribute__ __attribute__ ((__pure__))
@@ -76,7 +76,7 @@
 # define __const_attribute__
 #endif
 
-#if __GNUC__ < 4
+#if defined(__GNUC__) && (__GNUC__ < 4)
 #define __noreturn_attribute__
 #else
 #define __noreturn_attribute__ __attribute__ ((noreturn))
@@ -195,9 +195,15 @@ typedef struct
 {
   char *ar_name;		/* Name of archive member.  */
   time_t ar_date;		/* File date.  */
+#if defined(_WIN32)
+  long ar_uid;
+  long ar_gid;
+  unsigned long ar_mode;
+#else
   uid_t ar_uid;			/* User ID.  */
   gid_t ar_gid;			/* Group ID.  */
   mode_t ar_mode;		/* File mode.  */
+#endif
   int64_t ar_size;		/* File size.  */
   char *ar_rawname;		/* Original name of archive member.  */
 } Elf_Arhdr;

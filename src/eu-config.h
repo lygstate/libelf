@@ -44,7 +44,7 @@
 /* Eventually we will allow multi-threaded applications to use the
    libraries.  Therefore we will add the necessary locking although
    the macros used expand to nothing for now.  */
-# define rwlock_define(class,name) class int name
+# define rwlock_define(class,name) int name
 # define rwlock_init(lock) ((void) (lock))
 # define rwlock_fini(lock) ((void) (lock))
 # define rwlock_rdlock(lock) ((void) (lock))
@@ -54,8 +54,11 @@
 
 /* gettext helper macros.  */
 #define N_(Str) Str
+#if !defined(_MSC_VER)
 #define _(Str) dgettext ("elfutils", Str)
-
+#else
+#define _(Str) "elfutils" N_(Str)
+#endif
 /* Compiler-specific definitions.  */
 #define strong_alias(name, aliasname) \
   extern __typeof (name) aliasname __attribute__ ((alias (#name)));

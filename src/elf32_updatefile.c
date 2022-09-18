@@ -97,7 +97,7 @@ sort_sections (Elf_Scn **scns, Elf_ScnList *list)
   qsort (scns, scnp - scns, sizeof (*scns), compare_sections);
 }
 
-
+#ifndef _WIN32
 static inline void
 fill_mmap (size_t offset, char *last_position, char *scn_start,
            char *const shdr_start, char *const shdr_end)
@@ -484,6 +484,7 @@ __elfw2(LIBELFBITS,updatemmap) (Elf *elf, int change_bo, size_t shnum)
   return 0;
 }
 
+#endif
 
 /* Size of the buffer we use to generate the blocks of fill bytes.  */
 #define FILLBUFSIZE	4096
